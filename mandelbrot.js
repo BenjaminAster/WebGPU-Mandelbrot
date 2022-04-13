@@ -6,6 +6,8 @@ if (!navigator.gpu) {
 	throw new Error("WebGPU not supported");
 }
 
+const /** @type {boolean} */ isNotCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version < 102;
+
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
 const context = canvas.getContext("webgpu");
 
@@ -26,7 +28,7 @@ const zoomInfoBuffer = device.createBuffer({
 });
 
 const shaderModule = device.createShaderModule({
-	code: await (await window.fetch(new URL("./mandelbrot.wgsl", import.meta.url).href)).text(),
+	code: await (await window.fetch(new URL(isNotCanary ? "./mandelbrot.old.wgsl" : "./mandelbrot.wgsl", import.meta.url).href)).text(),
 });
 
 const pipeline = device.createRenderPipeline({
