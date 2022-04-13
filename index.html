@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<meta name="color-scheme" content="dark light" />
+	<meta name="robots" content="all" />
+	<meta name="theme-color" content="black" />
+	<meta name="description" content="A GPU accelerated Mandelbrot viewer made using the new WebGPU API." />
+
+	<meta http-equiv="origin-trial"
+		content="Ahzc4o2uAGbszqmwoA9snYpJ3ZrfcDB2hBS0y9t2utDX1zjvE4vc/VrxH24nFAHanu2G7x7zokojhtzlG/zmuQEAAABReyJvcmlnaW4iOiJodHRwczovL2JlbmphbWluYXN0ZXIuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJHUFUiLCJleHBpcnkiOjE2NTI4MzE5OTl9">
+
+	<link rel="icon" href="./assets/icon.webp" />
+
+	<title>WebGPU Mandelbrot</title>
+
+	<style>
+		body {
+			font-family: system-ui;
+			margin: 0;
+
+			padding: .5rem;
+			box-sizing: border-box;
+
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+
+			min-block-size: 100vh;
+		}
+
+		h1 {
+			font-size: 1.4rem;
+			font-weight: 600;
+		}
+
+		h1,
+		p {
+			margin-block: 0;
+		}
+
+		.canvas-container {
+			flex-grow: 1;
+			position: relative;
+		}
+
+		canvas {
+			display: block;
+			position: absolute;
+			block-size: 100%;
+			inline-size: 100%;
+			background-color: black;
+			border: 1px solid gray;
+			border-radius: .6rem;
+			box-sizing: border-box;
+		}
+
+		label.max-iterations {
+			display: flex;
+			gap: .5rem;
+		}
+
+		label.max-iterations input[type=range] {
+			flex-grow: 1;
+		}
+
+	</style>
+
+	<script type="module" src="./mandelbrot.js"></script>
+	<link rel="preload" as="fetch" crossorigin href="./mandelbrot.wgsl" />
+</head>
+
+<body>
+	<noscript>
+		Please enable JavaScript to view this site.
+		<hr />
+	</noscript>
+
+	<h1>WebGPU Mandelbrot</h1>
+
+	<p id="webgpu-not-supported" hidden>
+		WebGPU is not supported in your browser.
+		Please use <a href="https://www.google.com/chrome/canary/">Google Chrome Canary</a>
+		and enable the "Unsafe WebGPU" flag in
+		<a href="chrome://flags/#enable-unsafe-webgpu">chrome://flags</a>.
+	</p>
+
+	<label class="max-iterations">
+		<span>max iterations: <span id="max-iterations">1024</span></span>
+		<input type="range" min="0" max="15" value="10" step="1" />
+	</label>
+
+	<div class="canvas-container">
+		<canvas></canvas>
+	</div>
+</body>
+
+</html>
