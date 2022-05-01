@@ -41,6 +41,11 @@
 			margin-block: 0;
 		}
 
+		header {
+			display: flex;
+			justify-content: space-between;
+		}
+
 		.canvas-container {
 			flex-grow: 1;
 			position: relative;
@@ -78,7 +83,11 @@
 		<hr />
 	</noscript>
 
-	<h1>WebGPU Mandelbrot</h1>
+	<header>
+		<h1>WebGPU Mandelbrot</h1>
+
+		<a href="https://github.com/BenjaminAster/WebGPU-Mandelbrot">View on GitHub</a>
+	</header>
 
 	<p id="webgpu-not-supported" hidden>
 		WebGPU is not supported in your browser.

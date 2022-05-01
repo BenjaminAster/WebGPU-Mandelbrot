@@ -1,26 +1,26 @@
 
 /// <reference types="@webgpu/types" />
 
-if (!navigator.gpu) {
+const adapter = await navigator.gpu?.requestAdapter();
+const device = await adapter?.requestDevice();
+
+if (!device) {
 	(/** @type {HTMLElement} */ (document.querySelector("#webgpu-not-supported"))).hidden = false;
 	throw new Error("WebGPU not supported");
 }
 
-const /** @type {boolean} */ isNotCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version < 102;
+const isCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version >= 103;
 
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
 const context = canvas.getContext("webgpu");
 
-const adapter = await navigator.gpu.requestAdapter();
-const device = await adapter.requestDevice();
-
 const format = context.getPreferredFormat(adapter);
 
-const zoomInfoBufferSize =
+const zoomInfoBufferSize = (
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // center: vec2<f32>
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // rectangle: vec2<f32>
 	+ 1 * Uint32Array.BYTES_PER_ELEMENT // maxIterations: u32
-	;
+);
 
 const zoomInfoBuffer = device.createBuffer({
 	size: zoomInfoBufferSize,
@@ -28,7 +28,7 @@ const zoomInfoBuffer = device.createBuffer({
 });
 
 const shaderModule = device.createShaderModule({
-	code: await (await window.fetch(new URL(isNotCanary ? "./mandelbrot.old.wgsl" : "./mandelbrot.wgsl", import.meta.url).href)).text(),
+	code: await (await window.fetch(new URL(isCanary ? "./mandelbrot.wgsl" : "./mandelbrot.old.wgsl", import.meta.url).href)).text(),
 });
 
 const pipeline = device.createRenderPipeline({
