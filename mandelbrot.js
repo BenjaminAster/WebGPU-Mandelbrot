@@ -16,14 +16,14 @@ const context = canvas.getContext("webgpu");
 
 const format = context.getPreferredFormat(adapter);
 
-const zoomInfoBufferSize = (
+const uniformBufferSize = (
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // center: vec2<f32>
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // rectangle: vec2<f32>
 	+ 1 * Uint32Array.BYTES_PER_ELEMENT // maxIterations: u32
 );
 
-const zoomInfoBuffer = device.createBuffer({
-	size: zoomInfoBufferSize,
+const uniformBuffer = device.createBuffer({
+	size: uniformBufferSize,
 	usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 });
 
@@ -52,7 +52,7 @@ const bindGroup = device.createBindGroup({
 		{
 			binding: 0,
 			resource: {
-				buffer: zoomInfoBuffer,
+				buffer: uniformBuffer,
 			},
 		},
 	],
@@ -120,14 +120,14 @@ document.querySelector(".max-iterations input[type=range]").addEventListener("in
 {
 	const frame = () => {
 		{
-			const arrayBuffer = new ArrayBuffer(zoomInfoBufferSize);
+			const arrayBuffer = new ArrayBuffer(uniformBufferSize);
 			new Float32Array(arrayBuffer, 0).set(new Float32Array([
 				...center,
 				scalePerZoom ** -zoom * canvas.width / canvas.height,
 				scalePerZoom ** -zoom,
 			]));
 			new Uint32Array(arrayBuffer, (2 + 2) * Float32Array.BYTES_PER_ELEMENT).set([maxIterations]);
-			device.queue.writeBuffer(zoomInfoBuffer, 0, arrayBuffer);
+			device.queue.writeBuffer(uniformBuffer, 0, arrayBuffer);
 
 			const encoder = device.createCommandEncoder();
 			const renderPass = encoder.beginRenderPass({
