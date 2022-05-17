@@ -33,7 +33,7 @@ fn fragment_main(input: VertexOutput) -> @location(0) vec4<f32> {
 	var iteration: u32 = 0u;
 	let maxIterations: u32 = uniforms.maxIterations;
 
-	for (; iteration < maxIterations; iteration = iteration + 1u) {
+	for (; iteration < maxIterations; iteration++) {
 		z = vec2<f32>(
 			z.x * z.x - z.y * z.y + c.x,
 			2.0 * z.x * z.y + c.y,
@@ -43,7 +43,7 @@ fn fragment_main(input: VertexOutput) -> @location(0) vec4<f32> {
 			break;
 		}
 
-		iteration = iteration + 1u;
+		iteration++;
 	}
 
 	if (iteration < maxIterations) {

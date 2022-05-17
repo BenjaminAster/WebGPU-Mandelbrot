@@ -5,11 +5,11 @@ const adapter = await navigator.gpu?.requestAdapter();
 const device = await adapter?.requestDevice();
 
 if (!device) {
-	(/** @type {HTMLElement} */ (document.querySelector("#webgpu-not-supported"))).hidden = false;
+	;/** @type {HTMLElement} */ (document.querySelector("#webgpu-not-supported")).hidden = false;
 	throw new Error("WebGPU not supported");
 }
 
-const isCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version >= 103;
+const isCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version >= 104;
 
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
 const context = canvas.getContext("webgpu");
@@ -32,6 +32,7 @@ const shaderModule = device.createShaderModule({
 });
 
 const pipeline = device.createRenderPipeline({
+	...(isCanary ? { layout: "auto" } : {}),
 	vertex: {
 		module: shaderModule,
 		entryPoint: "vertex_main",
