@@ -39,8 +39,7 @@
 			font-weight: 600;
 		}
 
-		h1,
-		p {
+		h1, p {
 			margin-block: 0;
 		}
 
@@ -74,6 +73,12 @@
 			flex-grow: 1;
 		}
 
+		code {
+			padding: .1em .3em;
+			background-color: #8885;
+			border-radius: .2em;
+		}
+
 	</style>
 
 	<script type="module" src="./mandelbrot.js"></script>
@@ -87,16 +92,19 @@
 	</noscript>
 
 	<header>
-		<h1>WebGPU Mandelbrot</h1>
+		<h1><a href="https://gpuweb.github.io/gpuweb/explainer/">WebGPU</a> Mandelbrot</h1>
 
 		<a href="https://github.com/BenjaminAster/WebGPU-Mandelbrot">View on GitHub</a>
 	</header>
 
 	<p id="webgpu-not-supported" hidden>
-		WebGPU is not supported by your browser.
-		Please use <a href="https://www.google.com/chrome/canary/">Google Chrome Canary</a>
-		and enable the "Unsafe WebGPU" flag in
-		<a href="chrome://flags/#enable-unsafe-webgpu">chrome://flags</a>.
+		Your browser does not support WebGPU.
+		Please use <a href="https://www.google.com/chrome/">Google Chrome</a> or <a href="https://www.google.com/chrome/canary/">Google Chrome Canary</a>.
+	</p>
+
+	<p id="webgpu-outdated" hidden>
+		You are not using the newest version of <a href="https://www.google.com/chrome/">Google Chrome</a>, so WebGPU might not work properly.
+		Please update to the newest Google Chrome version by visiting <code>about:help</code> in Google Chrome.
 	</p>
 
 	<label class="max-iterations">

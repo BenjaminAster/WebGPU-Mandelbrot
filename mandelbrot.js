@@ -6,15 +6,31 @@ const device = await adapter?.requestDevice();
 
 if (!device) {
 	;/** @type {HTMLElement} */ (document.querySelector("#webgpu-not-supported")).hidden = false;
-	throw new Error("WebGPU not supported");
+	throw new Error("Your browser does not support WebGPU.");
 }
 
-const isCanary = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version >= 104;
+// https://chromiumdash.appspot.com/releases
+const currentChromeVersion = 102;
+const currentCanaryVersion = 104;
+const currentChromePatch = 61;
+
+const isNewBrowser = !(+(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version < currentCanaryVersion);
+
+if (!isNewBrowser) {
+	const [major, minor, build, patch] = /** @type {Number[]} */ ((
+		await (/** @type {any} */ (navigator)).userAgentData?.getHighEntropyValues(["uaFullVersion"])
+	).uaFullVersion.split(".").map(Number));
+
+	if (major < currentChromeVersion || (major === currentChromeVersion && patch < currentChromePatch)) {
+		;/** @type {HTMLElement} */ (document.querySelector("#webgpu-outdated")).hidden = false;
+		console.warn("The WebGPU implementation of your browser is outdated.");
+	}
+}
 
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
 const context = canvas.getContext("webgpu");
 
-const format = context.getPreferredFormat(adapter);
+const format = isNewBrowser ? navigator.gpu.getPreferredCanvasFormat() : context.getPreferredFormat(adapter);
 
 const uniformBufferSize = (
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // center: vec2<f32>
@@ -28,11 +44,11 @@ const uniformBuffer = device.createBuffer({
 });
 
 const shaderModule = device.createShaderModule({
-	code: await (await window.fetch(new URL(isCanary ? "./mandelbrot.wgsl" : "./mandelbrot.old.wgsl", import.meta.url).href)).text(),
+	code: await (await window.fetch(new URL("./mandelbrot.wgsl", import.meta.url).href)).text(),
 });
 
 const pipeline = device.createRenderPipeline({
-	...(isCanary ? { layout: "auto" } : {}),
+	...(/** @type {any} */ (isNewBrowser ? { layout: "auto" } : {})),
 	vertex: {
 		module: shaderModule,
 		entryPoint: "vertex_main",
