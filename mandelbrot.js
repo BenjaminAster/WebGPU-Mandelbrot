@@ -9,22 +9,15 @@ if (!device) {
 	throw new Error("Your browser does not support WebGPU.");
 }
 
-// https://chromiumdash.appspot.com/releases
 const currentChromeVersion = 102;
 const currentCanaryVersion = 104;
-const currentChromePatch = 61;
 
-const isNewBrowser = !(+(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version < currentCanaryVersion);
+const chromiumVersion = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version;
+const isNewBrowser = !(chromiumVersion < currentCanaryVersion);
 
-if (!isNewBrowser) {
-	const [major, minor, build, patch] = /** @type {Number[]} */ ((
-		await (/** @type {any} */ (navigator)).userAgentData?.getHighEntropyValues(["uaFullVersion"])
-	).uaFullVersion.split(".").map(Number));
-
-	if (major < currentChromeVersion || (major === currentChromeVersion && patch < currentChromePatch)) {
-		;/** @type {HTMLElement} */ (document.querySelector("#webgpu-outdated")).hidden = false;
-		console.warn("The WebGPU implementation of your browser is outdated.");
-	}
+if (chromiumVersion < currentChromeVersion) {
+	;/** @type {HTMLElement} */ (document.querySelector("#webgpu-outdated")).hidden = false;
+	console.warn("The WebGPU implementation of your browser is outdated.");
 }
 
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
@@ -76,17 +69,20 @@ const bindGroup = device.createBindGroup({
 });
 
 {
-	const resize = () => {
+	const resize = (/** @type {boolean?} */ firstTime) => {
 		canvas.width = canvas.clientWidth;
 		canvas.height = canvas.clientHeight;
-		context.configure({
-			device,
-			format,
-			compositingAlphaMode: "premultiplied",
-		});
+
+		if (firstTime || !isNewBrowser) {
+			context.configure({
+				device,
+				format,
+				[isNewBrowser ? "alphaMode" : "compositingAlphaMode"]: "premultiplied",
+			});
+		}
 	};
-	resize();
-	window.addEventListener("resize", resize);
+	resize(true);
+	window.addEventListener("resize", () => resize());
 }
 
 let center = [0, 0];
@@ -172,3 +168,4 @@ document.querySelector(".max-iterations input[type=range]").addEventListener("in
 
 export { };
 
+//# sourceMappingURL=data:,{"mappings":"","sources":["./mandelbrot.wgsl"]}
