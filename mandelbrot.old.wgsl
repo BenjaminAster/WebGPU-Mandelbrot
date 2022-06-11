@@ -12,7 +12,7 @@ struct Uniforms {
 
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
-@vertex
+@stage(vertex)
 fn vertex_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 	var output: VertexOutput;
 	let position2d: vec2<f32> = array<vec2<f32>, 4>(
@@ -26,7 +26,7 @@ fn vertex_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 	return output;
 }
 
-@fragment
+@stage(fragment)
 fn fragment_main(input: VertexOutput) -> @location(0) vec4<f32> {
 	var c: vec2<f32> = uniforms.center + input.fragmentPosition * uniforms.rectangle;
 	var z: vec2<f32> = c;

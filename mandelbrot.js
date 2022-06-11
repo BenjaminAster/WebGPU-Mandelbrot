@@ -10,7 +10,7 @@ if (!device) {
 }
 
 const currentChromeVersion = 102;
-const currentCanaryVersion = 104;
+const currentCanaryVersion = 105;
 
 const chromiumVersion = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version;
 const isNewBrowser = !(chromiumVersion < currentCanaryVersion);
@@ -37,7 +37,7 @@ const uniformBuffer = device.createBuffer({
 });
 
 const shaderModule = device.createShaderModule({
-	code: await (await window.fetch(new URL("./mandelbrot.wgsl", import.meta.url).href)).text(),
+	code: await (await window.fetch(new URL(isNewBrowser ? "./mandelbrot.wgsl" : "./mandelbrot.old.wgsl", import.meta.url).href)).text(),
 });
 
 const pipeline = device.createRenderPipeline({
