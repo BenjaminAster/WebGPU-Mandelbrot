@@ -9,7 +9,7 @@ if (!device) {
 	throw new Error("Your browser does not support WebGPU.");
 }
 
-const currentChromeVersion = 102;
+const currentChromeVersion = 103;
 const currentCanaryVersion = 105;
 
 const chromiumVersion = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version;
@@ -41,7 +41,7 @@ const shaderModule = device.createShaderModule({
 });
 
 const pipeline = device.createRenderPipeline({
-	...(/** @type {any} */ (isNewBrowser ? { layout: "auto" } : {})),
+	layout: "auto",
 	vertex: {
 		module: shaderModule,
 		entryPoint: "vertex_main",
