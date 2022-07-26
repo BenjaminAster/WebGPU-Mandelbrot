@@ -10,7 +10,7 @@ if (!device) {
 }
 
 const currentChromeVersion = 103;
-const currentCanaryVersion = 105;
+const currentCanaryVersion = 106;
 
 const chromiumVersion = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version;
 const isNewBrowser = !(chromiumVersion < currentCanaryVersion);
@@ -168,4 +168,4 @@ document.querySelector(".max-iterations input[type=range]").addEventListener("in
 
 export { };
 
-//# sourceMappingURL=data:,{"mappings":"","sources":["./mandelbrot.wgsl"]}
+//# sourceMappingURL=data:,{"version":3,"mappings":"","sources":["./mandelbrot.wgsl"]}
