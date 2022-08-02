@@ -9,7 +9,7 @@ if (!device) {
 	throw new Error("Your browser does not support WebGPU.");
 }
 
-const currentChromeVersion = 103;
+const currentChromeVersion = 104;
 const currentCanaryVersion = 106;
 
 const chromiumVersion = +(/** @type {any} */ (navigator)).userAgentData?.brands.find(({ brand }) => brand === "Chromium")?.version;
@@ -23,7 +23,7 @@ if (chromiumVersion < currentChromeVersion) {
 const canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("canvas"));
 const context = canvas.getContext("webgpu");
 
-const format = isNewBrowser ? navigator.gpu.getPreferredCanvasFormat() : context.getPreferredFormat(adapter);
+const format = navigator.gpu.getPreferredCanvasFormat();
 
 const uniformBufferSize = (
 	+ 2 * Float32Array.BYTES_PER_ELEMENT // center: vec2<f32>
@@ -69,21 +69,19 @@ const bindGroup = device.createBindGroup({
 });
 
 {
-	const resize = (/** @type {boolean?} */ firstTime) => {
+	const resize = () => {
 		canvas.width = canvas.clientWidth;
 		canvas.height = canvas.clientHeight;
-
-		if (firstTime || !isNewBrowser) {
-			context.configure({
-				device,
-				format,
-				[isNewBrowser ? "alphaMode" : "compositingAlphaMode"]: "premultiplied",
-			});
-		}
 	};
-	resize(true);
-	window.addEventListener("resize", () => resize());
+	resize();
+	window.addEventListener("resize", resize);
 }
+
+context.configure({
+	device,
+	format,
+	alphaMode: "premultiplied",
+});
 
 let center = [0, 0];
 let zoom = 0;
